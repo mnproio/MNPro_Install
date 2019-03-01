@@ -1,13 +1,14 @@
 #!/bin/bash
-
 TMP_FOLDER=$(mktemp -d)
 CONFIG_FILE='MNPRO.conf'
 CONFIGFOLDER='/root/.MNPRO'
 COIN_DAEMON='mnprod'
 COIN_CLI='mnpro-cli'
 COIN_PATH='/usr/local/bin/'
-COIN_TGZ='http://104.238.177.207/LinuxDaemon.zip'
-COIN_ZIP=$(echo $COIN_TGZ | awk -F'/' '{print $NF}')
+#COIN_TGZ='http://104.238.177.207/LinuxDaemon.zip' - decompressed files grab each
+COIN_GETDMN='https://github.com/mnproio/MNPRO/releases/download/2.1.0.0/mnprod'
+COIN_GETCLI='https://github.com/mnproio/MNPRO/releases/download/2.1.0.0/mnpro-cli'
+#COIN_ZIP=$(echo $COIN_TGZ | awk -F'/' '{print $NF}') - decompressed files
 COIN_NAME='MNPRO'
 COIN_EXPLORER='http://217.69.9.93'
 COIN_PORT=30229
@@ -17,7 +18,7 @@ NODEIP=$(curl -s4 icanhazip.com)
 
 BLUE="\033[0;34m"
 YELLOW="\033[0;33m"
-CYAN="\033[0;36m" 
+CYAN="\033[0;36m"
 PURPLE="\033[0;35m"
 RED='\033[0;31m'
 GREEN="\033[0;32m"
@@ -53,11 +54,15 @@ function install_sentinel() {
 function download_node() {
   echo -e "${GREEN}Downloading and Installing VPS $COIN_NAME Daemon${NC}"
   cd $TMP_FOLDER >/dev/null 2>&1
-  wget -q $COIN_TGZ
-  compile_error
-  unzip $COIN_ZIP >/dev/null 2>&1
-  compile_error
-  cd linux
+  wget -q $COIN_GETDMN
+  wget -q $COIN_GETCLI
+  #wget -q $COIN_TGZ - getting files directly uncompressed
+  #compile_error - skip
+  #unzip $COIN_ZIP >/dev/null 2>&1 - no need to unzip
+  cp $COIN_DAEMON >/dev/null 2>&1
+  cp $COIN_CLI >/dev/null 2>&1
+  #compile_error - skipped
+  #cd linux - not moving to /linux from unzip
   chmod +x $COIN_DAEMON
   chmod +x $COIN_CLI
   cp $COIN_DAEMON $COIN_PATH
@@ -74,24 +79,19 @@ function configure_systemd() {
 [Unit]
 Description=$COIN_NAME service
 After=network.target
-
 [Service]
 User=root
 Group=root
-
 Type=forking
 #PIDFile=$CONFIGFOLDER/$COIN_NAME.pid
-
 ExecStart=$COIN_PATH$COIN_DAEMON -daemon -conf=$CONFIGFOLDER/$CONFIG_FILE -datadir=$CONFIGFOLDER
 ExecStop=-$COIN_PATH$COIN_CLI -conf=$CONFIGFOLDER/$CONFIG_FILE -datadir=$CONFIGFOLDER stop
-
 Restart=always
 PrivateTmp=true
 TimeoutStopSec=60s
 TimeoutStartSec=10s
 StartLimitInterval=120s
 StartLimitBurst=5
-
 [Install]
 WantedBy=multi-user.target
 EOF
@@ -156,7 +156,6 @@ masternode=1
 masternodeaddr=$NODEIP:$COIN_PORT
 masternodeprivkey=$COINKEY
 #ADDNODES
-
 EOF
 }
 
@@ -292,4 +291,3 @@ checks
 prepare_system
 download_node
 setup_node
-
