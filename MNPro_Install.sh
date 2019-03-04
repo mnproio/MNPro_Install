@@ -6,11 +6,11 @@ COIN_DAEMON='mnprod'
 COIN_CLI='mnpro-cli'
 COIN_PATH='/usr/local/bin/'
 #COIN_TGZ='http://104.238.177.207/LinuxDaemon.zip' - decompressed files grab each
-COIN_GETDMN='https://github.com/mnproio/MNPRO/releases/download/2.1.0.0/mnprod'
-COIN_GETCLI='https://github.com/mnproio/MNPRO/releases/download/2.1.0.0/mnpro-cli'
+COIN_GETDMN='https://github.com/mnproio/MNPRO/releases/download/2.2.0.0/mnprod'
+COIN_GETCLI='https://github.com/mnproio/MNPRO/releases/download/2.2.0.0/mnpro-cli'
 #COIN_ZIP=$(echo $COIN_TGZ | awk -F'/' '{print $NF}') - decompressed files
 COIN_NAME='MNPRO'
-COIN_EXPLORER='http://217.69.9.93'
+COIN_EXPLORER='http://209.250.224.186'
 COIN_PORT=30229
 RPC_PORT=30230
 
